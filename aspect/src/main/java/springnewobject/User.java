@@ -10,22 +10,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 @Component
-public class User {
+public class User implements BeanNameAware {
+    @Override
+    public void setBeanName(String name) {
+        this.name = name;
+    }
 
     @NotBlank
     private String name;
     @NotBlank
     @Range(min = 2, max = 10, message = "not correct")
     private Integer age;
-
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
 
     public Integer getAge() {

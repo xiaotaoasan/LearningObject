@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.immomo.mts.flow.limit.http.mapper.ServiceLimitInfoMapper">
+
+    <resultMap id="limitModel" type="com.immomo.mts.flow.limit.http.domain.ServiceLimitInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="group_name" property="groupName" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="limit_status" property="limitStatus" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="queryInfoByPage" resultMap="limitModel">
+        SELECT
+            id,
+            group_name,
+            limit_status
+            create_time
+        FROM
+            service_limit_info
+        LIMIT
+            #{start},#{size}
+    </select>
+
+    <insert id="save" parameterType="com.immomo.mts.flow.limit.http.domain.ServiceLimitInfo">
+        INSERT
+              service_limit_info
+              (group_name,limit_status,create_time)
+        values
+              (#{groupName},#{limitStatus},#{createTime})
+    </insert>
+
+    <select id="getInfoByGroupName" resultMap="limitModel">
+        select id,group_name,limit_status,create_time from service_limit_info where service_limit_info.group_name = #{groupName}
+    </select>
+
+    <delete id="delete" >
+        delete from service_limit_info where group_name = #{groupName}
+    </delete>
+
+    <delete id="deleteAll" >
+        delete from service_limit_info where 1=1
+    </delete>
+
+</mapper>

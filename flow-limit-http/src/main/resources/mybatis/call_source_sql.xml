@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!--查询数据的接口-->
+<mapper namespace="com.immomo.mts.flow.limit.http.mapper.CallSourceInfoMapper">
+
+    <!--查询结果封装成对象-->
+    <resultMap id="CallSourceInfoModel" type="com.immomo.mts.flow.limit.http.domain.CallSourceInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="group_name" property="groupName" jdbcType="VARCHAR"/>
+        <result column="call_source" property="callSource" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="desc_info" property="descInfo" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--分页查询-->
+    <select id="queryCallSourceInfoByPage" resultMap="CallSourceInfoModel">
+        SELECT
+            id,
+            group_name,
+            call_source,
+            create_time,
+            desc_info
+        FROM
+            callsource_info_a
+        LIMIT
+            #{start},#{size}
+    </select>
+    <insert id="save" parameterType="com.immomo.mts.flow.limit.http.domain.CallSourceInfo">
+      insert
+       callsource_info_a
+       (group_name,call_source,desc_info,create_time)
+      values
+       (#{groupName},#{callSource},#{descInfo},#{createTime})
+    </insert>
+
+    <delete id="delete">
+      delete from callsource_info_a where group_name=#{groupName} and call_source=#{callSource}
+    </delete>
+
+    <select id="getCallSourceByGroupName" resultMap="CallSourceInfoModel">
+        select id,group_name,call_source,desc_info,create_time from callsource_info_a where group_name = #{groupName}
+    </select>
+
+    <select id="getOneCallInfo" resultMap="CallSourceInfoModel">
+        select id,group_name,call_source,desc_info,create_time from callsource_info_a where group_name = #{groupName} and call_source=#{callName}
+    </select>
+
+    <select id="searchGroupNameAndCallSource" resultMap="CallSourceInfoModel">
+        select
+        id,
+        group_name,
+        call_source,
+        create_time,
+        desc_info
+        from
+        callsource_info_a
+        where
+        call_source like CONCAT('%',#{callSource},'%')
+        <if test="groupName != null">
+            and group_name = #{groupName}
+        </if>
+    </select>
+    <delete id="deleteAll">
+        delete from callsource_info_a where 1=1
+    </delete>
+
+    <update id="updateDescInfo">
+        update
+        callsource_info_a
+        set
+         desc_info=#{descInfo}
+         where
+         group_name=#{groupName}
+         and
+         call_source=#{callSource}
+
+    </update>
+
+</mapper>
+
+

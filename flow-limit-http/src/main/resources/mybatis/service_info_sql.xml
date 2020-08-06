@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.immomo.mts.flow.limit.http.mapper.ServiceInfoMapper">
+
+    <resultMap id="AuthInfoModel" type="com.immomo.mts.flow.limit.http.domain.ServiceInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="group_name" property="groupName" jdbcType="VARCHAR"/>
+        <result column="developer" property="developer" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="appkey" property="appKey" jdbcType="VARCHAR"/>
+        <result column="appkey_id" property="appKeyId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="queryAuthInfoByPage" resultMap="AuthInfoModel">
+        SELECT
+            id,
+            group_name,
+            developer,
+            appkey,
+            appkey_id,
+            create_time
+        FROM
+            service_info_new
+        LIMIT
+            #{start},#{size}
+    </select>
+
+    <insert id="save" parameterType="com.immomo.mts.flow.limit.http.domain.ServiceInfo">
+        INSERT
+               service_info_new
+              (group_name,developer,appkey,appkey_id,create_time)
+        values
+              (#{groupName},#{developer},#{appKey},#{appKeyId},#{createTime})
+    </insert>
+
+
+    <select id="getAllGroupName" resultType="java.lang.String">
+        select distinct group_name from service_info_new
+    </select>
+
+
+    <select id="getByGroupName" resultMap="AuthInfoModel">
+        select id,group_name,developer,appkey,appkey_id,create_time from service_info_new where service_info_new.group_name = #{groupName}
+    </select>
+
+    <delete id="delete" >
+        delete from service_info_new where group_name = #{groupName} and developer = #{developer}
+    </delete>
+
+    <delete id="deleteAll" >
+        delete from service_info_new where 1=1
+    </delete>
+
+    <select id="getByGroupNameAndDeveloper" resultMap="AuthInfoModel">
+        select id,group_name,developer,appkey,appkey_id,create_time from service_info_new where service_info_new.group_name = #{groupName} and developer=#{developer}
+    </select>
+
+
+    <select id="getByGroupNamesAndDeveloper" resultMap="AuthInfoModel">
+        select
+            id,group_name,developer,appkey,appkey_id,create_time
+        from
+            service_info_new
+        where
+            group_name
+                in
+            <foreach collection="groupNames" item="groupName" open="(" close=")" separator="," index="index">
+                #{groupName}
+            </foreach>
+            and developer=#{developer}
+    </select>
+
+    <select id="getByDeveloper" resultMap="AuthInfoModel">
+        select id,group_name,developer,appkey,appkey_id,create_time from service_info_new where developer=#{developer}
+    </select>
+
+    <select id="searchByUserNameAndGroupName" resultType="java.lang.String">
+        select distinct
+            group_name
+        from
+            service_info_new
+        where
+            group_name like CONCAT('%',#{groupName},'%')
+        <if test="userName != null">
+            and developer = #{userName}
+        </if>
+    </select>
+    
+    <select id="getDevelopersByGroupName" resultType="java.lang.String">
+        select
+          developer
+        from
+            service_info_new
+        where
+          group_name = #{groupName}
+    </select>
+    <select id="getAppKeyIdAndAppKeyByGroupName" resultMap="AuthInfoModel">
+        SELECT DISTINCT
+            appkey_id,appkey
+         FROM
+            service_info_new
+         WHERE
+             group_name = #{groupName}
+
+    </select>
+
+</mapper>
